@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 
- .btn-ghost, .btn-primary {display: none;}
+ 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -550,10 +550,11 @@
   <div class="hero-badge"><span class="pulse-dot"></span> 1,200+ Active Groups</div>
   <h1>Find & Join<br><em>WhatsApp Groups</em></h1>
   <p>Discover communities for every interest — from tech and business to music, sports, and beyond. One click to join.</p>
-  <div class="hero-actions">
-    <button class="btn btn-primary" onclick="document.getElementById('submitModal').classList.add('open')">📤 Share Your Group</button>
-    <button class="btn btn-ghost" onclick="document.querySelector('.groups-grid').scrollIntoView({behavior:'smooth'})">Browse All →</button>
-  </div>
+ <div class="hero-actions">
+  <button class="btn btn-ghost" onclick="document.querySelector('.groups-grid').scrollIntoView({behavior:'smooth'})">
+    Browse All →
+  </button>
+</div>
   <div class="hero-stats">
     <div class="stat"><div class="stat-num" id="statGroups">0</div><div class="stat-label">Groups Listed</div></div>
     <div class="stat"><div class="stat-num">50K+</div><div class="stat-label">Members Connected</div></div>
