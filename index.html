@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GroupHub — Find & Share WhatsApp Groups</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --wa: #25D366;
+    --wa-dark: #128C7E;
+    --wa-light: #DCF8C6;
+    --bg: #0a0f0d;
+    --surface: #111915;
+    --surface2: #182119;
+    --surface3: #1e2b21;
+    --border: rgba(37,211,102,0.15);
+    --border2: rgba(37,211,102,0.25);
+    --text: #e8f5ea;
+    --text2: #8aab8e;
+    --text3: #4d6b50;
+    --accent: #25D366;
+    --accent2: #19a34a;
+    --danger: #e24b4a;
+    --warn: #d4a017;
+    --radius: 12px;
+    --radius-lg: 18px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,15,13,0.95);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 2rem;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 16px;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 34px;
+    height: 34px;
+    background: var(--wa);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .logo span { color: var(--wa); }
+  .header-search {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+  }
+  .header-search input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 16px 8px 40px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .header-search input:focus { border-color: var(--border2); }
+  .header-search input::placeholder { color: var(--text3); }
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    font-size: 16px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--wa);
+    color: #0a0f0d;
+  }
+  .btn-primary:hover { background: #1fb958; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(180deg, #0d1f12 0%, var(--bg) 100%);
+    padding: 80px 2rem 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(37,211,102,0.1);
+    border: 1px solid rgba(37,211,102,0.2);
+    border-radius: 999px;
+    padding: 4px 14px;
+    font-size: 13px;
+    color: var(--wa);
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--wa);
+  }
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text2);
+    max-width: 540px;
+    margin: 0 auto 36px;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+    margin-top: 52px;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--wa);
+    line-height: 1;
+  }
+  .stat-label { font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 2rem;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 32px;
+  }
+
+  /* SIDEBAR */
+  .sidebar { position: sticky; top: 80px; height: fit-content; }
+  .sidebar-section { margin-bottom: 28px; }
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+  .category-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: var(--radius);
+    background: transparent;
+    border: none;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .category-btn:hover { background: var(--surface2); color: var(--text); }
+  .category-btn.active { background: rgba(37,211,102,0.1); color: var(--wa); }
+  .category-btn .cat-icon { font-size: 18px; width: 20px; text-align: center; }
+  .category-btn .cat-count {
+    margin-left: auto;
+    font-size: 12px;
+    background: var(--surface3);
+    padding: 2px 8px;
+    border-radius: 999px;
+    color: var(--text3);
+  }
+  .category-btn.active .cat-count { background: rgba(37,211,102,0.15); color: var(--wa); }
+
+  /* CONTENT */
+  .content-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .content-title { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; }
+  .sort-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 14px;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* CARDS */
+  .groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .group-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    transition: all 0.2s;]
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .group-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--wa);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .group-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .group-card:hover::before { opacity: 1; }
+  .card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .card-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .card-meta { flex: 1; min-width: 0; }
+  .card-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .card-category {
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .card-desc {
+    font-size: 13.5px;
+    color: var(--text2);
+    line-height: 1.55;
+    margin-bottom: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .card-members {
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .join-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--wa);
+    color: #0a0f0d;
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .join-btn:hover { background: #1fb958; transform: scale(1.03); }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--surface3);
+    color: var(--text3);
+    margin-top: 10px;
+    margin-right: 4px;
+  }
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: var(--wa);
+    background: rgba(37,211,102,0.1);
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .modal-close {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 16px;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { color: var(--text); border-color: var(--border2); }
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 7px;
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--border2); }
+  .form-input::placeholder, .form-textarea::placeholder { color: var(--text3); }
+  .form-textarea { resize: vertical; min-height: 90px; }
+  .form-select option { background: #1a2620; }
+  .submit-btn {
+    width: 100%;
+    background: var(--wa);
+    color: #0a0f0d;
+    border: none;
+    border-radius: 999px;
+    padding: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+  .submit-btn:hover { background: #1fb958; }
+
+  /* EMPTY / TOAST */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+    grid-column: 1/-1;
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--wa);
+    border-radius: var(--radius);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    z-index: 300;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-dot { width: 8px; height: 8px; background: var(--wa); border-radius: 50%; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { position: static; display: none; }
+    .hero { padding: 48px 1.5rem 40px; }
+    header { padding: 0 1rem; }
+    .header-search { display: none; }
+    .hero-stats { gap: 28px; }
+  }
+
+  .pulse-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--wa);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <div class="logo-icon">💬</div>
+      Group<span>Hub</span>
+    </a>
+    <div class="header-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="headerSearch" placeholder="Search groups..." oninput="filterGroups()">
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn btn-ghost" onclick="document.getElementById('submitModal').classList.add('open')">+ Submit Group</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><span class="pulse-dot"></span> 1,200+ Active Groups</div>
+  <h1>Find & Join<br><em>WhatsApp Groups</em></h1>
+  <p>Discover communities for every interest — from tech and business to music, sports, and beyond. One click to join.</p>
+  <div class="hero-actions">
+    <button class="btn btn-primary" onclick="document.getElementById('submitModal').classList.add('open')">📤 Share Your Group</button>
+    <button class="btn btn-ghost" onclick="document.querySelector('.groups-grid').scrollIntoView({behavior:'smooth'})">Browse All →</button>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num" id="statGroups">0</div><div class="stat-label">Groups Listed</div></div>
+    <div class="stat"><div class="stat-num">50K+</div><div class="stat-label">Members Connected</div></div>
+    <div class="stat"><div class="stat-num">24</div><div class="stat-label">Categories</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Free to Join</div></div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Browse by Category</div>
+      <button class="category-btn active" onclick="setCategory('all', this)">
+        <span class="cat-icon">🌐</span> All Groups
+        <span class="cat-count" id="cnt-all">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Technology', this)">
+        <span class="cat-icon">💻</span> Technology
+        <span class="cat-count" id="cnt-Technology">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Business', this)">
+        <span class="cat-icon">💼</span> Business
+        <span class="cat-count" id="cnt-Business">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Education', this)">
+        <span class="cat-icon">📚</span> Education
+        <span class="cat-count" id="cnt-Education">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Sports', this)">
+        <span class="cat-icon">⚽</span> Sports
+        <span class="cat-count" id="cnt-Sports">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Music', this)">
+        <span class="cat-icon">🎵</span> Music
+        <span class="cat-count" id="cnt-Music">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Health', this)">
+        <span class="cat-icon">💪</span> Health & Fitness
+        <span class="cat-count" id="cnt-Health">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Entertainment', this)">
+        <span class="cat-icon">🎬</span> Entertainment
+        <span class="cat-count" id="cnt-Entertainment">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Faith', this)">
+        <span class="cat-icon">🙏</span> Faith & Religion
+        <span class="cat-count" id="cnt-Faith">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Travel', this)">
+        <span class="cat-icon">✈️</span> Travel
+        <span class="cat-count" id="cnt-Travel">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Gaming', this)">
+        <span class="cat-icon">🎮</span> Gaming
+        <span class="cat-count" id="cnt-Gaming">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('Jobs', this)">
+        <span class="cat-icon">💰</span> Jobs & Careers
+        <span class="cat-count" id="cnt-Jobs">0</span>
+      </button>
+      <button class="category-btn" onclick="setCategory('News', this)">
+        <span class="cat-icon">📰</span> News & Politics
+        <span class="cat-count" id="cnt-News">0</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Filter</div>
+      <button class="category-btn" onclick="setFilter('verified', this)">
+        <span class="cat-icon">✅</span> Verified Only
+      </button>
+      <button class="category-btn" onclick="setFilter('new', this)">
+        <span class="cat-icon">🆕</span> Recently Added
+      </button>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div>
+    <div class="content-header">
+      <div>
+        <div class="content-title" id="contentTitle">All Groups</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:2px;" id="resultCount"></div>
+      </div>
+      <select class="sort-select" onchange="sortGroups(this.value)">
+        <option value="newest">Newest first</option>
+        <option value="popular">Most popular</option>
+        <option value="az">A – Z</option>
+      </select>
+    </div>
+    <div class="groups-grid" id="groupsGrid"></div>
+  </div>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="modal-overlay" id="submitModal" onclick="closeModalOutside(event, 'submitModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📤 Submit a Group</div>
+      <button class="modal-close" onclick="document.getElementById('submitModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Group Name *</label>
+      <input class="form-input" id="newName" placeholder="e.g. Uganda Tech Founders" maxlength="60">
+    </div>
+    <div class="form-group">
+      <label class="form-label">WhatsApp Group Link *</label>
+      <input class="form-input" id="newLink" placeholder="https://chat.whatsapp.com/...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Category *</label>
+      <select class="form-select" id="newCategory">
+        <option value="">Select a category</option>
+        <option>Technology</option><option>Business</option><option>Education</option>
+        <option>Sports</option><option>Music</option><option>Health</option>
+        <option>Entertainment</option><option>Faith</option><option>Travel</option>
+        <option>Gaming</option><option>Jobs</option><option>News</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description *</label>
+      <textarea class="form-textarea" id="newDesc" placeholder="What is this group about? Who should join?" maxlength="200"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tags (comma-separated)</label>
+      <input class="form-input" id="newTags" placeholder="e.g. developers, startups, Kampala">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Approximate Member Count</label>
+      <input class="form-input" id="newMembers" type="number" placeholder="e.g. 150" min="1" max="1024">
+    </div>
+    <button class="submit-btn" onclick="submitGroup()">🚀 Submit Group</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-dot"></div>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+const CATEGORIES = {
+  'Technology': { emoji: '💻', bg: '#0d1f2d' },
+  'Business':   { emoji: '💼', bg: '#1a1a0d' },
+  'Education':  { emoji: '📚', bg: '#0d1a0d' },
+  'Sports':     { emoji: '⚽', bg: '#0d1a1a' },
+  'Music':      { emoji: '🎵', bg: '#1a0d1a' },
+  'Health':     { emoji: '💪', bg: '#0d1a10' },
+  'Entertainment':{ emoji: '🎬', bg: '#1a0d10' },
+  'Faith':      { emoji: '🙏', bg: '#1a1510' },
+  'Travel':     { emoji: '✈️', bg: '#0d1520' },
+  'Gaming':     { emoji: '🎮', bg: '#15001a' },
+  'Jobs':       { emoji: '💰', bg: '#1a1800' },
+  'News':       { emoji: '📰', bg: '#1a1010' },
+};
+
+const DEFAULT_GROUPS = [
+  { name: "Uganda Tech Hub", category: "Technology", desc: "Connect with developers, designers, and tech entrepreneurs across Uganda. Share opportunities and resources.", link: "https://chat.whatsaphttps://chat.whatsapp.com/EU4eFeqhsaW9KgQHo9i0PEp.com/example1", members: 512, tags: ["developers","Kampala","Uganda"], verified: true, date: Date.now() - 86400000 },
+  { name: "African Startups Network", category: "Business", desc: "Pan-African entrepreneurs sharing funding opportunities, mentorship, and collaboration.", link: "https://chat.whatsapp.com/EU4eFeqhsaW9KgQHo9i0PE", members: 890, tags: ["startups","Africa","funding"], verified: true, date: Date.now() - 172800000 },
+  { name: "KCCA Daily Jobs", category: "Jobs", desc: "Daily job postings for Kampala and greater Uganda. Both formal and informal opportunities.", link: "https://chat.whatsapp.com/example3", members: 1024, tags: ["jobs","Kampala","employment"], verified: false, date: Date.now() - 259200000 },
+  { name: "Uganda Boda & Taxi Owners", category: "Business", desc: "For transport operators — share routes, safety tips, and organize collective action.", link: "https://chat.whatsapp.com/EU4eFeqhsaW9KgQHo9i0PE", members: 340, tags: ["transport","boda","taxi"], verified: false, date: Date.now() - 345600000 },
+  { name: "Makerere Study Group 2025", category: "Education", desc: "Students at Makerere University sharing notes, past papers, and academic support.", link: "https://chat.whatsapp.com/example5", members: 220, tags: ["makerere","students","study"], verified: false, date: Date.now() - 86400000 * 5 },
+  { name: "East Africa Crypto Traders", category: "Technology", desc: "Crypto trading signals, news, and analysis focused on East African markets.", link: "https://chat.whatsapp.com/EU4eFeqhsaW9KgQHo9i0PE", members: 675, tags: ["crypto","trading","finance"], verified: true, date: Date.now() - 86400000 * 3 },
+  { name: "Uganda Cranes Supporters", category: "Sports", desc: "The official fan community for Uganda Cranes football. Match updates, discussions, and fan meetups.", link: "https://chat.whatsapp.com/EU4eFeqhsaW9KgQHo9i0PE", members: 987, tags: ["football","Uganda Cranes","FUFA"], verified: true, date: Date.now() - 86400000 * 7 },
+  { name: "Afrobeats & Afropop Lovers", category: "Music", desc: "Share the latest Afrobeats, Afropop, and Afrofusion tracks. New music drops daily!", link: "https://chat.whatsapp.com/EU4eFeqhsaW9KgQHo9i0PE", members: 445, tags: ["music","afrobeats","playlist"], verified: false, date: Date.now() - 86400000 * 2 },
+  { name: "Kampala Fitness Squad", category: "Health", desc: "Morning runs, gym sessions, healthy eating tips for Kampala residents. Accountability matters!", link: "https://chat.whatsapp.com/EU4eFeqhsaW9KgQHo9i0PE", members: 183, tags: ["fitness","gym","health","Kampala"], verified: false, date: Date.now() - 86400000 * 10 },
+  { name: "Uganda Gospel Community", category: "Faith", desc: "Daily devotions, praise, and prayer. A community of believers across all denominations.", link: "https://chat.whatsapp.com/example10", members: 763, tags: ["gospel","prayer","Christian","Uganda"], verified: true, date: Date.now() - 86400000 * 6 },
+  { name: "EA Travel & Tourism", category: "Travel", desc: "Affordable travel deals, safaris, and hidden gems across East and Central Africa.", link: "https://chat.whatsapp.com/example11", members: 312, tags: ["travel","safari","Uganda","Kenya"], verified: false, date: Date.now() - 86400000 * 4 },
+  { name: "PUBG Mobile Uganda", category: "Gaming", desc: "Uganda's top PUBG Mobile community. Tournaments, squad-finding, tips & game updates.", link: "https://chat.whatsapp.com/example12", members: 560, tags: ["PUBG","gaming","esports"], verified: false, date: Date.now() - 86400000 * 8 },
+  { name: "Uganda Business News", category: "News", desc: "Breaking business and economic news about Uganda and East Africa. No politics.", link: "https://chat.whatsapp.com/example13", members: 824, tags: ["news","business","economy"], verified: true, date: Date.now() - 86400000 * 1 },
+  { name: "African Movie & Series Hub", category: "Entertainment", desc: "Latest Nollywood, Ugandan, and African content. Watch parties and reviews every weekend.", link: "https://chat.whatsapp.com/example14", members: 448, tags: ["movies","Nollywood","series"], verified: false, date: Date.now() - 86400000 * 9 },
+];
+
+let groups = JSON.parse(localStorage.getItem('gh_groups') || 'null') || DEFAULT_GROUPS;
+let currentCategory = 'all';
+let currentSort = 'newest';
+let currentSearch = '';
+let filterVerified = false;
+let filterNew = false;
+
+function saveGroups() { localStorage.setItem('gh_groups', JSON.stringify(groups)); }
+
+function getFiltered() {
+  let result = [...groups];
+  if (currentCategory !== 'all') result = result.filter(g => g.category === currentCategory);
+  if (filterVerified) result = result.filter(g => g.verified);
+  if (filterNew) {
+    const week = Date.now() - 7 * 86400000;
+    result = result.filter(g => g.date > week);
+  }
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    result = result.filter(g =>
+      g.name.toLowerCase().includes(q) ||
+      g.desc.toLowerCase().includes(q) ||
+      (g.tags || []).some(t => t.toLowerCase().includes(q))
+    );
+  }
+  if (currentSort === 'newest') result.sort((a,b) => b.date - a.date);
+  if (currentSort === 'popular') result.sort((a,b) => b.members - a.members);
+  if (currentSort === 'az') result.sort((a,b) => a.name.localeCompare(b.name));
+  return result;
+}
+
+function updateCounts() {
+  const allCats = ['Technology','Business','Education','Sports','Music','Health','Entertainment','Faith','Travel','Gaming','Jobs','News'];
+  document.getElementById('cnt-all').textContent = groups.length;
+  allCats.forEach(cat => {
+    const el = document.getElementById('cnt-' + cat);
+    if (el) el.textContent = groups.filter(g => g.category === cat).length;
+  });
+  document.getElementById('statGroups').textContent = groups.length + '+';
+}
+
+function renderGroups() {
+  const filtered = getFiltered();
+  const grid = document.getElementById('groupsGrid');
+  document.getElementById('resultCount').textContent = `${filtered.length} group${filtered.length !== 1 ? 's' : ''} found`;
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div style="font-size:1.1rem;margin-bottom:8px;color:var(--text2)">No groups found</div><div style="font-size:14px">Try a different search or submit your group!</div></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map((g, i) => {
+    const cat = CATEGORIES[g.category] || { emoji: '🌐', bg: '#111' };
+    const tags = (g.tags || []).slice(0, 3).map(t => `<span class="tag">#${t}</span>`).join('');
+    const verifiedBadge = g.verified ? `<span class="verified-badge">✅ Verified</span>` : '';
+    const timeAgo = getTimeAgo(g.date);
+    return `
+      <div class="group-card" style="animation: fadeIn 0.3s ${i * 0.04}s both">
+        <div class="card-header">
+          <div class="card-avatar" style="background:${cat.bg}">${cat.emoji}</div>
+          <div class="card-meta">
+            <div class="card-name" title="${g.name}">${g.name}</div>
+            <div class="card-category">${g.category} · <span style="color:var(--text3)">${timeAgo}</span></div>
+          </div>
+        </div>
+        <div class="card-desc">${g.desc}</div>
+        <div>${tags}</div>
+        <div class="card-footer" style="margin-top:14px">
+          <div>
+            ${verifiedBadge}
+            <div class="card-members" style="margin-top:${g.verified?'5px':'0'}">👥 ${g.members >= 1024 ? '1024 (max)' : g.members + ' members'}</div>
+          </div>
+          <a class="join-btn" href="${g.link}" target="_blank" onclick="countJoin(event, this)">Join ↗</a>
+        </div>
+      </div>`;
+  }).join('');
+  updateCounts();
+}
+
+function countJoin(e, el) {
+  showToast('Opening WhatsApp group…');
+}
+
+function getTimeAgo(date) {
+  const diff = Date.now() - date;
+  const d = Math.floor(diff / 86400000);
+  if (d < 1) return 'Today';
+  if (d === 1) return 'Yesterday';
+  if (d < 7) return d + ' days ago';
+  if (d < 30) return Math.floor(d / 7) + ' weeks ago';
+  return Math.floor(d / 30) + ' months ago';
+}
+
+function setCategory(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterVerified = false;
+  filterNew = false;
+  document.getElementById('contentTitle').textContent = cat === 'all' ? 'All Groups' : cat + ' Groups';
+  renderGroups();
+}
+
+function setFilter(type, btn) {
+  if (type === 'verified') { filterVerified = !filterVerified; btn.classList.toggle('active', filterVerified); }
+  if (type === 'new') { filterNew = !filterNew; btn.classList.toggle('active', filterNew); }
+  renderGroups();
+}
+
+function sortGroups(val) { currentSort = val; renderGroups(); }
+
+function filterGroups() {
+  currentSearch = document.getElementById('headerSearch').value.trim();
+  renderGroups();
+}
+
+function submitGroup() {
+  const name = document.getElementById('newName').value.trim();
+  const link = document.getElementById('newLink').value.trim();
+  const category = document.getElementById('newCategory').value;
+  const desc = document.getElementById('newDesc').value.trim();
+  const tagsRaw = document.getElementById('newTags').value.trim();
+  const members = parseInt(document.getElementById('newMembers').value) || 0;
+
+  if (!name || !link || !category || !desc) { showToast('⚠️ Please fill all required fields'); return; }
+  if (!link.includes('chat.whatsapp.com')) { showToast('⚠️ Please enter a valid WhatsApp link'); return; }
+
+  const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+  groups.unshift({ name, link, category, desc, tags, members: Math.min(members || 50, 1024), verified: false, date: Date.now() });
+  saveGroups();
+  renderGroups();
+  document.getElementById('submitModal').classList.remove('open');
+  ['newName','newLink','newDesc','newTags'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('newCategory').value = '';
+  document.getElementById('newMembers').value = '';
+  showToast('🎉 Group submitted successfully!');
+}
+
+function closeModalOutside(e, id) {
+  if (e.target === e.currentTarget) document.getElementById(id).classList.remove('open');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+const style = document.createElement('style');
+style.textContent = `@keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }`;
+document.head.appendChild(style);
+
+renderGroups();
+</script>
+</body>
+</html>
